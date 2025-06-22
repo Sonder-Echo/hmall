@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/../../../../study/java/课程/05阶段：微服务框架/01-MybatisPlus/资料/黑马商城/mysql/hmall.sql" dialect="MySQL" />
-  </component>
-</project>
