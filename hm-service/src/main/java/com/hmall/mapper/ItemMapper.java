@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Update;
  * 商品表 Mapper 接口
  * </p>
  *
+ * @author itheima
+ * @since 2023-05-05
  */
 public interface ItemMapper extends BaseMapper<Item> {
 

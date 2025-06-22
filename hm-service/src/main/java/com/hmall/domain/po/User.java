@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
  * 用户表
  * </p>
  *
+ * @author itheima
+ * @since 2023-05-05
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

@@ -12,6 +12,9 @@ import java.util.List;
  * <p>
  * 商品表 服务类
  * </p>
+ *
+ * @author itheima
+ * @since 2023-05-05
  */
 public interface IItemService extends IService<Item> {
 

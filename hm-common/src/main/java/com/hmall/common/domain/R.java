@@ -2,7 +2,6 @@ package com.hmall.common.domain;
 
 import com.hmall.common.exception.CommonException;
 import lombok.Data;
-import lombok.Getter;
 
 
 @Data

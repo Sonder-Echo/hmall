@@ -29,6 +29,8 @@ knife4j:
   openapi:
     title: 黑马商城接口文档
     description: "黑马商城接口文档"
+    email: itheima@itcast.cn
+    concat: itheima
     url: https://www.itcast.cn
     version: v1.0.0
     group:

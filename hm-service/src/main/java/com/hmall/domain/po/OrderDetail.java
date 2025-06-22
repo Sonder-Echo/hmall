@@ -9,6 +9,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+/**
+ * <p>
+ * 订单详情表
+ * </p>
+ *
+ * @author itheima
+ * @since 2023-05-05
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)

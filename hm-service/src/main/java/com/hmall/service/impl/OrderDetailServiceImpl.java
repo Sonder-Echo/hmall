@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
  * 订单详情表 服务实现类
  * </p>
  *
+ * @author itheima
+ * @since 2023-05-05
  */
 @Service
 public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, OrderDetail> implements IOrderDetailService {

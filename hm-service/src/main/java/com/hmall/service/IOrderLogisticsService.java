@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * <p>
  *  服务类
  * </p>
+ *
+ * @author itheima
+ * @since 2023-05-05
  */
 public interface IOrderLogisticsService extends IService<OrderLogistics> {
 

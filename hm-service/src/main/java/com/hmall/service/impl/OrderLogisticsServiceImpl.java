@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
  * <p>
  *  服务实现类
  * </p>
+ *
+ * @author itheima
+ * @since 2023-05-05
  */
 @Service
 public class OrderLogisticsServiceImpl extends ServiceImpl<OrderLogisticsMapper, OrderLogistics> implements IOrderLogisticsService {

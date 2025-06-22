@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class CommonException extends RuntimeException{
-    private final int code;
+    private int code;
 
     public CommonException(String message, int code) {
         super(message);

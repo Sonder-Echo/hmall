@@ -2,7 +2,6 @@ package com.hmall.controller;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hmall.common.domain.PageDTO;
@@ -32,6 +31,7 @@ public class SearchController {
         // 1.条件查询
         LambdaQueryChainWrapper<Item> wrapper = itemService.lambdaQuery()
                 .like(StrUtil.isNotBlank(query.getKey()), Item::getName, query.getKey())
+                .eq(StrUtil.isNotBlank(query.getBrand()), Item::getBrand, query.getBrand())
                 .eq(StrUtil.isNotBlank(query.getCategory()), Item::getCategory, query.getCategory())
                 .eq(StrUtil.isNotBlank(query.getBrand()), Item::getBrand, query.getBrand())
                 .ge(query.getMinPrice() != null, Item::getPrice, query.getMinPrice())

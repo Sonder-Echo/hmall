@@ -17,6 +17,8 @@ import java.util.List;
  * <p>
  * 商品表 服务实现类
  * </p>
+ *
+ * @author itheima
  */
 @Service
 public class ItemServiceImpl extends ServiceImpl<ItemMapper, Item> implements IItemService {
@@ -27,9 +29,10 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, Item> implements II
         boolean r = false;
         try {
             r = executeBatch(items, (sqlSession, entity) -> sqlSession.update(sqlStatement, entity));
+            
         } catch (Exception e) {
             log.error("更新库存异常", e);
-            return;
+            throw new BizIllegalException("库存不足！");
         }
         if (!r) {
             throw new BizIllegalException("库存不足！");

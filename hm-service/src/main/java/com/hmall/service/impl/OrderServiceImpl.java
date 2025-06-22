@@ -24,6 +24,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * <p>
+ * 服务实现类
+ * </p>
+ *
+ * @author itheima
+ * @since 2023-05-05
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {

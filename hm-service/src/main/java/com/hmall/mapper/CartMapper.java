@@ -10,8 +10,11 @@ import org.apache.ibatis.annotations.Update;
  * 订单详情表 Mapper 接口
  * </p>
  *
+ * @author itheima
+ * @since 2023-05-05
  */
 public interface CartMapper extends BaseMapper<Cart> {
 
-   
+    @Update("UPDATE cart SET num = num + 1 WHERE user_id = #{userId} AND item_id = #{itemId}")
+    void updateNum(@Param("itemId") Long itemId, @Param("userId") Long userId);
 }
