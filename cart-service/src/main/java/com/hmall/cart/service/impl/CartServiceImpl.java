@@ -4,6 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hmall.cart.client.ItemClient;
 import com.hmall.cart.config.RemoteCallConfig;
 import com.hmall.common.exception.BizIllegalException;
 import com.hmall.common.utils.BeanUtils;
@@ -44,10 +45,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
 
-    // TODO: 远程调用
 //    private final IItemService itemService;
-    private final RestTemplate restTemplate; // 负载均衡客户端
-    private final DiscoveryClient discoveryClient; // 服务发现客户端
+//    private final RestTemplate restTemplate;
+//    private final DiscoveryClient discoveryClient; // 服务发现客户端
+    private final ItemClient itemClient;
 
     @Override
     public void addItem2Cart(CartFormDTO cartFormDTO) {
@@ -99,7 +100,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         //发送请求，地址类似:http://localhost:8081/items?ids=561178,584382   获得商品列表
         // 2.查询商品
         // List<ItemDTO> items = itemService.queryItemByIds(itemIds);
-        List<ItemDTO> items = null;
+       /* List<ItemDTO> items = null;
 
         //获取注册中心中item-service的服务列表
         List<ServiceInstance> instanceList = discoveryClient.getInstances("item-service");
@@ -118,7 +119,9 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         );
         if(response.getStatusCode().is2xxSuccessful()){ //如果响应成功
             items = response.getBody(); //获取响应体
-        }
+        }*/
+
+        List<ItemDTO> items = itemClient.queryItemByIds(itemIds);
 
         if (CollUtils.isEmpty(items)) {
             return;
