@@ -12,10 +12,12 @@ import com.hmall.item.service.IItemService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @Api(tags = "商品管理相关接口")
 @RestController
 @RequestMapping("/items")
@@ -79,6 +81,7 @@ public class ItemController {
     @ApiOperation("批量扣减库存")
     @PutMapping("/stock/deduct")
     public void deductStock(@RequestBody List<OrderDetailDTO> items){
+        log.info("开始扣减库存,{}", items);
         itemService.deductStock(items);
     }
 }
