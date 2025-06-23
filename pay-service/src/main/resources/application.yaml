@@ -1,12 +1,12 @@
 server:
-  port: 8084
+  port: 8085
 spring:
   application:
-    name: trade-service
+    name: pay-service
   profiles:
     active: dev
   datasource:
-    url: jdbc:mysql://${hm.db.host}:3306/hm-trade?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${hm.db.host}:3306/hm-pay?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${hm.db.pw}
@@ -31,8 +31,8 @@ logging:
 knife4j:
   enable: true
   openapi:
-    title: 交易服务接口文档
-    description: "交易服务接口文档"
+    title: 支付服务接口文档
+    description: "支付服务接口文档"
     email: itheima@itcast.cn
     concat: itheima
     url: https://www.itcast.cn
@@ -42,4 +42,4 @@ knife4j:
         group-name: default
         api-rule: package
         api-rule-resources:
-          - com.hmall.trade.controller
+          - com.hmall.pay.controller
