@@ -3,6 +3,7 @@ package com.hmall.cart.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hmall.cart.config.RemoteCallConfig;
 import com.hmall.common.exception.BizIllegalException;
 import com.hmall.common.utils.BeanUtils;
 import com.hmall.common.utils.CollUtils;
@@ -14,7 +15,12 @@ import com.hmall.cart.domain.vo.CartVO;
 import com.hmall.cart.mapper.CartMapper;
 import com.hmall.cart.service.ICartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +43,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     // TODO: 远程调用
 //    private final IItemService itemService;
+    private final RestTemplate restTemplate;
 
     @Override
     public void addItem2Cart(CartFormDTO cartFormDTO) {
@@ -84,9 +91,23 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
     private void handleCartItems(List<CartVO> vos) {
         // 1.获取商品id
         Set<Long> itemIds = vos.stream().map(CartVO::getItemId).collect(Collectors.toSet());
+
+        //发送请求，地址类似:http://localhost:8081/items?ids=561178,584382   获得商品列表
         // 2.查询商品
-//        List<ItemDTO> items = itemService.queryItemByIds(itemIds);
-        /*List<ItemDTO> items = itemService.queryItemByIds(itemIds);
+        // List<ItemDTO> items = itemService.queryItemByIds(itemIds);
+        List<ItemDTO> items = null;
+        String url = "http://localhost:8081/items?ids={ids}";
+        ResponseEntity<List<ItemDTO>> response = restTemplate.exchange(url, //地址
+                HttpMethod.GET, //请求方式
+                null,  //请求参数实体，因为在路径中携带，所以不需要
+                new ParameterizedTypeReference<List<ItemDTO>>() {
+                }, //响应参数类型
+                Map.of("ids", CollUtils.join(itemIds, ",")) //将集合中的元素使用逗号分割拼接成字符串
+        );
+        if(response.getStatusCode().is2xxSuccessful()){ //如果响应成功
+            items = response.getBody(); //获取响应体
+        }
+
         if (CollUtils.isEmpty(items)) {
             return;
         }
@@ -101,7 +122,7 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
             v.setNewPrice(item.getPrice());
             v.setStatus(item.getStatus());
             v.setStock(item.getStock());
-        }*/
+        }
     }
 
     @Override
