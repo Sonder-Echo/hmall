@@ -1,5 +1,6 @@
 package com.hmall.cart.service.impl;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +16,8 @@ import com.hmall.cart.domain.vo.CartVO;
 import com.hmall.cart.mapper.CartMapper;
 import com.hmall.cart.service.ICartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -43,7 +46,8 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     // TODO: 远程调用
 //    private final IItemService itemService;
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate; // 负载均衡客户端
+    private final DiscoveryClient discoveryClient; // 服务发现客户端
 
     @Override
     public void addItem2Cart(CartFormDTO cartFormDTO) {
@@ -96,7 +100,15 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         // 2.查询商品
         // List<ItemDTO> items = itemService.queryItemByIds(itemIds);
         List<ItemDTO> items = null;
-        String url = "http://localhost:8081/items?ids={ids}";
+
+        //获取注册中心中item-service的服务列表
+        List<ServiceInstance> instanceList = discoveryClient.getInstances("item-service");
+        //从服务列表中随机选择一个服务实例
+        ServiceInstance serviceInstance = instanceList.get(RandomUtil.randomInt(instanceList.size()));
+        //从服务实例中获得商品微服务的访问地址
+//        String url = "http://localhost:8081/items?ids={ids}";
+        String url = serviceInstance.getUri()+"/items?ids={ids}";
+
         ResponseEntity<List<ItemDTO>> response = restTemplate.exchange(url, //地址
                 HttpMethod.GET, //请求方式
                 null,  //请求参数实体，因为在路径中携带，所以不需要
