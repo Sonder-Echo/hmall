@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmall.api.client.ItemClient;
+import com.hmall.cart.config.CartProperties;
 import com.hmall.cart.config.RemoteCallConfig;
 import com.hmall.common.exception.BizIllegalException;
 import com.hmall.common.utils.BeanUtils;
@@ -17,6 +18,7 @@ import com.hmall.cart.domain.vo.CartVO;
 import com.hmall.cart.mapper.CartMapper;
 import com.hmall.cart.service.ICartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
@@ -43,12 +45,14 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@EnableConfigurationProperties(CartProperties.class) // 允许配置文件
 public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements ICartService {
 
 //    private final IItemService itemService;
 //    private final RestTemplate restTemplate;
 //    private final DiscoveryClient discoveryClient; // 服务发现客户端
     private final ItemClient itemClient;
+    private final CartProperties cartProperties;
 
     @Override
     public void addItem2Cart(CartFormDTO cartFormDTO) {
@@ -152,8 +156,8 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
 
     private void checkCartsFull(Long userId) {
         int count = lambdaQuery().eq(Cart::getUserId, userId).count();
-        if (count >= 10) {
-            throw new BizIllegalException(StrUtil.format("用户购物车课程不能超过{}", 10));
+        if (count >= cartProperties.getMaxAmount()) {
+            throw new BizIllegalException(StrUtil.format("用户购物车课程不能超过{}", cartProperties.getMaxAmount()));
         }
     }
 
