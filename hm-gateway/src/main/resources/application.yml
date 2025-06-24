@@ -17,6 +17,14 @@ spring:
           uri: lb://item-service
           predicates:
             - Path=/items/**,/search/**
+          filters:
+            - AddRequestHeader=testStr,hello itheima
+#          predicates:
+#            - Path=/api/items/**,/search/**
+#          filters:
+#            - StripPrefix=1 # 路由到后端微服务的时候移除前缀，1表示移除1个前缀，2表示移除2个前缀...
+
+
         - id: user
           uri: lb://user-service
           predicates:
