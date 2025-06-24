@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: hm-gateway
+  cloud:
+    nacos:
+      server-addr: 192.168.100.128:8848
+    gateway:
+      routes: # 路由配置
+        - id: cart # 唯一即可
+          uri: lb://cart-service # 负载均衡调用:cart-service 名字要与nacos中配置的服务名保持一致
+          predicates: # 断言：符合什么规则才路由
+            - Path=/carts/** # 路径中包含carts则路由
+        - id: item
+          uri: lb://item-service
+          predicates:
+            - Path=/items/**,/search/**
+        - id: user
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+        - id: trade
+          uri: lb://trade-service
+          predicates:
+            - Path=/orders/**
+        - id: pay
+          uri: lb://pay-service
+          predicates:
+            - Path=/pay-orders/**
+
+
+
