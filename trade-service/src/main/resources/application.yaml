@@ -43,3 +43,7 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.hmall.trade.controller
+# 开启连接池
+feign:
+  okhttp:
+    enabled: true # 开启okhttp的feign底层请求调用客户端为okhttp

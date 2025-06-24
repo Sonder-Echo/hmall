@@ -14,7 +14,7 @@ import java.util.Collection;
 public interface CartClient {
     //在接口内：编写要远程调用的方法，这些方法都可以参考自服务提供者（item-service）对应的接口
 
-    //删除购物车
+    //删除购物车 对应的方法名可以不同，但是建议和服务提供者的方法名一致
     @DeleteMapping("/carts")
     public void deleteCartItemByIds(@RequestParam("ids") Collection<Long> ids);
 }

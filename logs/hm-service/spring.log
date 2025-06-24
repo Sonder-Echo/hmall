@@ -29233,3 +29233,20 @@ Caused by: java.net.ConnectException: Connection timed out: connect
 12:37:08:720 DEBUG 17708 --- [http-nio-8080-exec-1] com.hmall.mapper.ItemMapper.selectPage   : <==      Total: 20
 15:01:30:448  INFO 17708 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 15:01:30:457  INFO 17708 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+04:27:02:896  INFO 4056 --- [main] com.hmall.HMallApplication               : Starting HMallApplication using Java 11.0.7 on DESKTOP-NVFS9AQ with PID 4056 (D:\wzk\study\javaProject\hmall\hm-service\target\classes started by Sonder in D:\wzk\study\javaProject\hmall)
+04:27:02:996 DEBUG 4056 --- [main] com.hmall.HMallApplication               : Running with Spring Boot v2.7.12, Spring v5.3.27
+04:27:02:997  INFO 4056 --- [main] com.hmall.HMallApplication               : The following 1 profile is active: "dev"
+04:27:04:305  INFO 4056 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+04:27:04:323  INFO 4056 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+04:27:04:391  INFO 4056 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 22 ms. Found 0 Redis repository interfaces.
+04:27:05:266  INFO 4056 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+04:27:05:283  INFO 4056 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+04:27:05:283  INFO 4056 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.75]
+04:27:05:495  INFO 4056 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+04:27:05:496  INFO 4056 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2426 ms
+04:27:10:311  INFO 4056 --- [main] pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2ControllerWebMvc#getDocumentation(String, HttpServletRequest)]
+04:27:11:403  INFO 4056 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+04:27:11:404  INFO 4056 --- [main] d.s.w.p.DocumentationPluginsBootstrapper : Documentation plugins bootstrapped
+04:27:11:409  INFO 4056 --- [main] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+04:27:11:468  INFO 4056 --- [main] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+04:27:11:875  INFO 4056 --- [main] com.hmall.HMallApplication               : Started HMallApplication in 9.63 seconds (JVM running for 11.425)
