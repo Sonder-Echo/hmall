@@ -37,6 +37,8 @@ spring:
           uri: lb://pay-service
           predicates:
             - Path=/pay-orders/**
+      default-filters: # 默认过滤器 会对所有的路由生效
+        - PrintAny
 
 
 
