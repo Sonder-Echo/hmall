@@ -1,5 +1,6 @@
 package com.hmall.api.config;
 
+import com.hmall.api.fallback.ItemClientFallback;
 import com.hmall.common.utils.UserContext;
 import feign.Logger;
 import feign.RequestInterceptor;
@@ -7,6 +8,11 @@ import feign.RequestTemplate;
 import org.springframework.context.annotation.Bean;
 
 public class DefaultFeignConfig {
+    //注册关于商品远程调用客户端的fallback
+    @Bean
+    public ItemClientFallback itemClientFallback() {
+        return new ItemClientFallback();
+    }
 
     //注册feign日志记录级别：none->basic-headers->full
     @Bean
