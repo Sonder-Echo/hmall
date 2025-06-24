@@ -46,6 +46,10 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
             //4、将用户信息传递到后端微服务
             System.out.println("userId:"+userId);
+            //将用户id设置到请求头; 改写request对象，设置请求头到后端的微服务
+            exchange.mutate().request(builder -> {
+                builder.header("user-info", userId.toString());
+            }).build();
 
         } catch (Exception e) {
             // 校验不通过则返回，没有授权;401
