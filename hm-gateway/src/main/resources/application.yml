@@ -1,44 +1,44 @@
 server:
   port: 8080
 
-spring:
-  application:
-    name: hm-gateway
-  cloud:
-    nacos:
-      server-addr: 192.168.100.128:8848
-    gateway:
-      routes: # 路由配置
-        - id: cart # 唯一即可
-          uri: lb://cart-service # 负载均衡调用:cart-service 名字要与nacos中配置的服务名保持一致
-          predicates: # 断言：符合什么规则才路由
-            - Path=/carts/** # 路径中包含carts则路由
-        - id: item
-          uri: lb://item-service
-          predicates:
-            - Path=/items/**,/search/**
-          filters:
-            - AddRequestHeader=testStr,hello itheima
+#spring:
+#  application:
+#    name: hm-gateway
+#  cloud:
+#    nacos:
+#      server-addr: 192.168.100.128:8848
+#    gateway:
+#      routes: # 路由配置
+#        - id: cart # 唯一即可
+#          uri: lb://cart-service # 负载均衡调用:cart-service 名字要与nacos中配置的服务名保持一致
+#          predicates: # 断言：符合什么规则才路由
+#            - Path=/carts/** # 路径中包含carts则路由
+#        - id: item
+#          uri: lb://item-service
 #          predicates:
-#            - Path=/api/items/**,/search/**
+#            - Path=/items/**,/search/**
 #          filters:
-#            - StripPrefix=1 # 路由到后端微服务的时候移除前缀，1表示移除1个前缀，2表示移除2个前缀...
-
-
-        - id: user
-          uri: lb://user-service
-          predicates:
-            - Path=/users/**
-        - id: trade
-          uri: lb://trade-service
-          predicates:
-            - Path=/orders/**
-        - id: pay
-          uri: lb://pay-service
-          predicates:
-            - Path=/pay-orders/**
-      default-filters: # 默认过滤器 会对所有的路由生效
-        - PrintAny=1,2,3
+#            - AddRequestHeader=testStr,hello itheima
+##          predicates:
+##            - Path=/api/items/**,/search/**
+##          filters:
+##            - StripPrefix=1 # 路由到后端微服务的时候移除前缀，1表示移除1个前缀，2表示移除2个前缀...
+#
+#
+#        - id: user
+#          uri: lb://user-service
+#          predicates:
+#            - Path=/users/**
+#        - id: trade
+#          uri: lb://trade-service
+#          predicates:
+#            - Path=/orders/**
+#        - id: pay
+#          uri: lb://pay-service
+#          predicates:
+#            - Path=/pay-orders/**
+#      default-filters: # 默认过滤器 会对所有的路由生效
+#        - PrintAny=1,2,3
 
 hm:
   jwt:
@@ -52,7 +52,6 @@ hm:
       - /users/login
       - /items/**
       - /hi
-# keytool -genkeypair -alias hmall -keyalg RSA -keypass hmall123 -keystore hmall.jks -storepass hmall123
 
 
 
