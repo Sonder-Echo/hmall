@@ -1,6 +1,9 @@
 package com.hmall.api.config;
 
+import com.hmall.api.fallback.CartClientFallback;
 import com.hmall.api.fallback.ItemClientFallback;
+import com.hmall.api.fallback.TradeClientFallback;
+import com.hmall.api.fallback.UserClientFallback;
 import com.hmall.common.utils.UserContext;
 import feign.Logger;
 import feign.RequestInterceptor;
@@ -12,6 +15,21 @@ public class DefaultFeignConfig {
     @Bean
     public ItemClientFallback itemClientFallback() {
         return new ItemClientFallback();
+    }
+    //注册关于购物车远程调用客户端的fallback
+    @Bean
+    public CartClientFallback cartClientFallback(){
+        return new CartClientFallback();
+    }
+    //注册关于交易远程调用客户端的fallback
+    @Bean
+    public TradeClientFallback tradeClientFallback(){
+        return new TradeClientFallback();
+    }
+    //注册关于用户远程调用客户端的fallback
+    @Bean
+    public UserClientFallback userClientFallback(){
+        return new UserClientFallback();
     }
 
     //注册feign日志记录级别：none->basic-headers->full
@@ -34,6 +52,12 @@ public class DefaultFeignConfig {
                 }
             }
         };
+    }
+
+    //配置feign的日志级别
+    @Bean
+    public Logger.Level feignLoggerLevel(){
+        return Logger.Level.FULL;
     }
 
 }

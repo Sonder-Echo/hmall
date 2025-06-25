@@ -89,7 +89,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         } catch (Exception e) {
             throw new RuntimeException("库存不足！");
         }
-//        int i = 1 / 0;
+
+//        int i = 1/0;
         return order.getId();
     }
 

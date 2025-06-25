@@ -3,6 +3,8 @@ server:
 feign:
   okhttp:
     enabled: true # 开启okhttp的feign底层请求调用客户端为okhttp
+  sentinel:
+    enabled: true # 开启Feign对Sentinel的整合
 
 hm:
   db:
@@ -24,4 +26,9 @@ hm:
         - /items/**
         - /hi
   # keytool -genkeypair -alias hmall -keyalg RSA -keypass hmall123 -keystore hmall.jks -storepass hmall123
-
+spring:
+  cloud:
+    sentinel:
+      transport:
+        dashboard: http://localhost:8090
+      http-method-specify: true # 开启请求方式前缀
