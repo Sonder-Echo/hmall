@@ -12,4 +12,4 @@ hm:
     package: com.hmall.item.controller
 
 seata:
-  data-source-proxy-mode: XA
+  data-source-proxy-mode: AT

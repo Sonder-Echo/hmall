@@ -11,4 +11,4 @@ hm:
     title: 交易服务接口文档
     package: com.hmall.trade.controller
 seata:
-  data-source-proxy-mode: XA
+  data-source-proxy-mode: AT
