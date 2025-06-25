@@ -1,8 +1,8 @@
 server:
   port: 8081
-feign:
-  okhttp:
-    enabled: true # 开启okhttp的feign底层请求调用客户端为okhttp
+#feign:
+#  okhttp:
+#    enabled: true # 开启okhttp的feign底层请求调用客户端为okhttp
 
 hm:
   db:

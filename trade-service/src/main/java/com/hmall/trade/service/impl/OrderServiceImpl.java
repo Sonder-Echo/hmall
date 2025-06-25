@@ -15,6 +15,7 @@ import com.hmall.trade.mapper.OrderMapper;
 //import com.hmall.trade.service.IItemService;
 import com.hmall.trade.service.IOrderDetailService;
 import com.hmall.trade.service.IOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +46,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 //    private final ICartService cartService;
 
     @Override
-    @Transactional
+//    @Transactional
+    @GlobalTransactional // 使用分布式事务控制
     public Long createOrder(OrderFormDTO orderFormDTO) {
         // 1.订单数据
         Order order = new Order();
@@ -79,6 +81,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 3.清理购物车商品
         cartClient.deleteCartItemByIds(itemIds);
+
+        int i = 1 / 0;
 
         // 4.扣减库存
         try {
