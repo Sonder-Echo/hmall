@@ -17,14 +17,6 @@ spring:
       transport:
         dashboard: http://localhost:8090
       http-method-specify: true # 开启请求方式前缀
-  # 配置rabbitmq
-  rabbitmq:
-    host: 192.168.100.128 # rabbitmq地址
-    port: 5672 # 代码连接端口，如果是网页访问端口是15672
-    virtual-host: /hmall # 虚拟主机
-    username: hmall
-    password: 123
-
 
 seata:
   data-source-proxy-mode: AT

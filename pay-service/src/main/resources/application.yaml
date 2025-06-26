@@ -10,10 +10,3 @@ hm:
   swagger:
     title: 支付服务接口文档
     package: com.hmall.pay.controller
-spring:
-  rabbitmq:
-    host: 192.168.100.128 # rabbitmq地址
-    port: 5672 # 代码连接端口，如果是网页访问端口是15672
-    virtual-host: /hmall # 虚拟主机
-    username: hmall
-    password: 123
