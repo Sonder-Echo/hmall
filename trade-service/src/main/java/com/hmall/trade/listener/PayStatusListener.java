@@ -17,7 +17,7 @@ public class PayStatusListener {
 
     //监听队列中的订单id
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = "mark.order.pay.queue", durable = "true"),
+            value = @Queue(value = "cart.clear.queue", durable = "true"),
             exchange = @Exchange(value = "pay.topic", type = ExchangeTypes.TOPIC),
             key = "pay.success"
     ))

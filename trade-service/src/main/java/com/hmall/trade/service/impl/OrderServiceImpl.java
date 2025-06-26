@@ -3,6 +3,7 @@ package com.hmall.trade.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmall.api.client.CartClient;
 import com.hmall.api.client.ItemClient;
+import com.hmall.common.constants.MqConstants;
 import com.hmall.common.exception.BadRequestException;
 import com.hmall.common.utils.UserContext;
 import com.hmall.api.dto.ItemDTO;
@@ -17,14 +18,16 @@ import com.hmall.trade.service.IOrderDetailService;
 import com.hmall.trade.service.IOrderService;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +47,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 //    private final IItemService itemService;
     private final IOrderDetailService detailService;
 //    private final ICartService cartService;
+
+    private final RabbitTemplate rabbitTemplate;
 
     @Override
 //    @Transactional
@@ -80,8 +85,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         detailService.saveBatch(details);
 
         // 3.清理购物车商品
-        cartClient.deleteCartItemByIds(itemIds);
-
+//        cartClient.deleteCartItemByIds(itemIds);
+        rabbitTemplate.convertAndSend(MqConstants.TRADE_EXCHANGE_NAME,
+                MqConstants.ROUTING_KEY_ORDER_CREATE, itemIds, new MessagePostProcessor() {
+                    //在发送消息之前最后队消息进行处理
+                    @Override
+                    public Message postProcessMessage(Message message) throws AmqpException {
+                        //将当前登录用户的id设置到消息头部中
+                        message.getMessageProperties().setHeader("user-info", UserContext.getUser());
+                        return message;
+                    }
+                });
 
         // 4.扣减库存
         try {
