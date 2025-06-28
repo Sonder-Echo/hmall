@@ -17,4 +17,10 @@ public interface IOrderService extends IService<Order> {
     Long createOrder(OrderFormDTO orderFormDTO);
 
     void markOrderPaySuccess(Long orderId);
+
+    /**
+     * 取消订单
+     * @param id
+     */
+    void cancelOrder(Long id);
 }

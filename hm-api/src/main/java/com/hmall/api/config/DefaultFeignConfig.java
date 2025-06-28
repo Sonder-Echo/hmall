@@ -1,9 +1,6 @@
 package com.hmall.api.config;
 
-import com.hmall.api.fallback.CartClientFallback;
-import com.hmall.api.fallback.ItemClientFallback;
-import com.hmall.api.fallback.TradeClientFallback;
-import com.hmall.api.fallback.UserClientFallback;
+import com.hmall.api.fallback.*;
 import com.hmall.common.utils.UserContext;
 import feign.Logger;
 import feign.RequestInterceptor;
@@ -30,6 +27,11 @@ public class DefaultFeignConfig {
     @Bean
     public UserClientFallback userClientFallback(){
         return new UserClientFallback();
+    }
+    //注册关于支付远程调用客户端的fallback
+    @Bean
+    public PayClientFallback payClientFallback(){
+        return new PayClientFallback();
     }
 
     //注册feign日志记录级别：none->basic-headers->full

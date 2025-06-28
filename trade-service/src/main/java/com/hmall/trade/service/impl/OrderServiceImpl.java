@@ -1,13 +1,19 @@
 package com.hmall.trade.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hmall.api.client.CartClient;
 import com.hmall.api.client.ItemClient;
 import com.hmall.common.constants.MqConstants;
+import com.hmall.common.domain.MultiDelayMessage;
 import com.hmall.common.exception.BadRequestException;
+import com.hmall.common.exception.BizIllegalException;
+import com.hmall.common.utils.BeanUtils;
 import com.hmall.common.utils.UserContext;
 import com.hmall.api.dto.ItemDTO;
 import com.hmall.api.dto.OrderDetailDTO;
+import com.hmall.trade.constants.TradeMqConstants;
 import com.hmall.trade.domain.dto.OrderFormDTO;
 import com.hmall.trade.domain.po.Order;
 import com.hmall.trade.domain.po.OrderDetail;
@@ -105,6 +111,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
 
 //        int i = 1/0;
+
+        // 发送延迟消息,确认订单支付状态来修改订单状态
+        //共延迟12s，分别延迟2s,4s,7s,12s后查询订单状态
+        try {
+            MultiDelayMessage<Long> msg = MultiDelayMessage.of(order.getId(), 2000,3000,5000);
+            rabbitTemplate.convertAndSend(TradeMqConstants.DELAY_EXCHANGE, TradeMqConstants.DELAY_ORDER_ROUTING_KEY, msg, new MessagePostProcessor() {
+                @Override
+                public Message postProcessMessage(Message message) throws AmqpException {
+                    message.getMessageProperties().setDelay(2000);
+                    return message;
+                }
+            });
+        }catch (AmqpException e){
+            System.out.println("发送查询订单状态的延迟消息失败");
+        }
+
         return order.getId();
     }
 
@@ -145,5 +167,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             details.add(detail);
         }
         return details;
+    }
+
+    @Override
+    @GlobalTransactional
+    public void cancelOrder(Long id) {
+        //修改订单状态为已取消(状态为5)
+        lambdaUpdate().set(Order::getStatus, 5)
+                .set(Order::getCloseTime, LocalDateTime.now())
+                .set(Order::getUpdateTime, LocalDateTime.now())
+                .eq(Order::getId, id)
+                .eq(Order::getStatus, 1) //幂等校验
+                .update();
+
+        //1.根据订单id查询商品列表
+        List<OrderDetail> orderDetails = detailService.lambdaQuery().eq(OrderDetail::getOrderId, id).list();
+        // 如果商品列表为空，则退出
+        if (CollUtil.isEmpty(orderDetails)) {
+            throw new BizIllegalException("该订单没有商品！");
+        }
+        // 得到商品id列表
+        List<OrderDetailDTO> orderDetailDTOS = BeanUtils.copyList(orderDetails, OrderDetailDTO.class);
+
+        for (OrderDetailDTO orderDetailDTO : orderDetailDTOS) {
+            //将商品库存改为负数
+            orderDetailDTO.setNum(-orderDetailDTO.getNum());
+        }
+        // 退还商品库存
+        itemClient.deductStock(orderDetailDTOS);
     }
 }
