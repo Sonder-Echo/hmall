@@ -18,15 +18,21 @@ public class ItemClientFallback implements FallbackFactory<ItemClient> {
         return new ItemClient() {
             @Override
             public List<ItemDTO> queryItemByIds(Collection<Long> ids) {
-                log.error("调用商品id集合查询商品列表失败，具体参数为：{}", ids, cause);
+                log.error("远程调用ItemClient.queryItemByIds失败，具体参数为：{}", ids, cause);
                 return CollUtils.emptyList();
             }
 
             @Override
             public void deductStock(List<OrderDetailDTO> items) {
                 // 这个扣减商品库存的接口：与下单的业务有关联，如果出错了需要将异常跑出来
-                log.error("调用扣减商品库存失败，具体参数为：{}", items, cause);
+                log.error("远程调用ItemClient.deductStock失败，具体参数为：{}", items, cause);
                 throw new BizIllegalException("扣减商品库存失败！");
+            }
+
+            @Override
+            public ItemDTO queryItemById(Long id) {
+                log.error("远程调用ItemClient.queryItemById失败，具体参数为：{}", id, cause);
+                return null;
             }
         };
     }

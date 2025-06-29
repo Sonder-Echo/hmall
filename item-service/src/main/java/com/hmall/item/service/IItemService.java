@@ -21,4 +21,11 @@ public interface IItemService extends IService<Item> {
     void deductStock(List<OrderDetailDTO> items);
 
     List<ItemDTO> queryItemByIds(Collection<Long> ids);
+
+    /**
+     * 修改商品状态
+     * @param id
+     * @param status
+     */
+    void updateItemStatus(Long id, Integer status);
 }

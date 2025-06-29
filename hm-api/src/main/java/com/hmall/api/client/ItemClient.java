@@ -4,6 +4,7 @@ import com.hmall.api.config.DefaultFeignConfig;
 import com.hmall.api.dto.ItemDTO;
 import com.hmall.api.dto.OrderDetailDTO;
 import com.hmall.api.fallback.ItemClientFallback;
+import com.hmall.common.utils.BeanUtils;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,4 +26,8 @@ public interface ItemClient {
     //扣减库存
     @PutMapping("/items/stock/deduct")
     public void deductStock(@RequestBody List<OrderDetailDTO> items);
+
+    //根据id查询商品
+    @GetMapping("/items/{id}")
+    public ItemDTO queryItemById(@PathVariable("id") Long id);
 }
