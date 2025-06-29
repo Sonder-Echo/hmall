@@ -3,6 +3,7 @@ package com.hmall.search.es;
 import cn.hutool.json.JSONUtil;
 import com.hmall.api.dto.ItemDTO;
 import org.apache.http.HttpHost;
+import org.bouncycastle.cert.ocsp.Req;
 import org.checkerframework.checker.units.qual.A;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -13,12 +14,22 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class SearchTest {
 
@@ -158,6 +169,27 @@ public class SearchTest {
         handelResponse(response);
     }
 
+    //测试高亮
+    @Test
+    public void testHighlight() throws IOException {
+        SearchRequest request = new SearchRequest(INDEX_NAME);
+        request.source().query(QueryBuilders.matchQuery("name", "小米"));
+        //设置高亮
+        request.source().highlighter(
+                SearchSourceBuilder.highlight()
+                        .field("name")
+                        .preTags("<em>")
+                        .postTags("</em>")
+        );
+
+        //发起请求
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+
+        //处理结果
+        handelResponse(response);
+
+    }
+
 
     private static void handelResponse(SearchResponse searchResponse) {
         //解析响应结果
@@ -171,9 +203,20 @@ public class SearchTest {
                 //获取源文档json字符串
                 String jsonStr = hit.getSourceAsString();
                 ItemDTO itemDTO = JSONUtil.toBean(jsonStr, ItemDTO.class);
+
+                //获取高亮结果
+                Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+                if(highlightFields != null && highlightFields.containsKey("name")){
+                    HighlightField highlightField = highlightFields.get("name");
+                    String highlightName = highlightField.fragments()[0].string();
+                    itemDTO.setName(highlightName);
+                }
+
                 System.out.println(itemDTO);
             }
         }
     }
+
+
 
 }
