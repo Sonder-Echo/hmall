@@ -19,6 +19,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.Stats;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
@@ -228,6 +229,9 @@ public class SearchTest {
         //设置品牌的聚合统计
         request.source().aggregation(
                 AggregationBuilders.terms("brand_agg").field("brand.keyword").size(20)
+                        .subAggregation(
+                                AggregationBuilders.stats("stat_metric").field("price")
+                        )
         );
 
         SearchResponse searchResponse = client.search(request, RequestOptions.DEFAULT);
@@ -242,6 +246,12 @@ public class SearchTest {
                 long docCount = bucket.getDocCount();
                 System.out.println("------------------------------------");
                 System.out.println("key:" + key + " docCount:" + docCount);
+                Aggregations statAgg = bucket.getAggregations();
+                Stats statMetric = statAgg.get("stat_metric");
+                System.out.println("平均价格:" + statMetric.getAvg());
+                System.out.println("最大价格:" + statMetric.getMax());
+                System.out.println("最小价格:" + statMetric.getMin());
+                System.out.println("总价:" + statMetric.getSum());
             }
         }
 
