@@ -217,6 +217,34 @@ public class SearchTest {
         }
     }
 
+    //聚合统计
+    @Test
+    public void testAggregation() throws IOException {
+        SearchRequest request = new SearchRequest(INDEX_NAME);
 
+        request.source().query(QueryBuilders.termQuery("category.keyword", "手机"));
+        //不返回文档
+        request.source().size(0);
+        //设置品牌的聚合统计
+        request.source().aggregation(
+                AggregationBuilders.terms("brand_agg").field("brand.keyword").size(20)
+        );
+
+        SearchResponse searchResponse = client.search(request, RequestOptions.DEFAULT);
+
+        //解析聚合结果
+        Aggregations aggregations = searchResponse.getAggregations();
+        Terms brandAgg = aggregations.get("brand_agg");
+        if (brandAgg != null){
+            List<? extends Terms.Bucket> buckets = brandAgg.getBuckets();
+            for (Terms.Bucket bucket : buckets) {
+                String key = bucket.getKeyAsString();
+                long docCount = bucket.getDocCount();
+                System.out.println("------------------------------------");
+                System.out.println("key:" + key + " docCount:" + docCount);
+            }
+        }
+
+    }
 
 }
