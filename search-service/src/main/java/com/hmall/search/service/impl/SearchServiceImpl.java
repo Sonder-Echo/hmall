@@ -18,10 +18,13 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -145,8 +148,23 @@ public class SearchServiceImpl implements ISearchService {
                 //默认按照更新时间降序排序
                 request.source().sort("updateTime", SortOrder.DESC);
             }
+
+            //竞价排名：将isAD为true的文档排在前面
+            FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders.functionScoreQuery(
+                    //原始查询
+                    boolQueryBuilder,
+                    //算分函数
+                    new FunctionScoreQueryBuilder.FilterFunctionBuilder[]{
+                            new FunctionScoreQueryBuilder.FilterFunctionBuilder(
+                                    // TODO：查找为什么term要.keyword原因
+                                    QueryBuilders.termQuery("isAD.keywork", true),
+                                    ScoreFunctionBuilders.weightFactorFunction(10)
+                            )
+                    }
+            ).boostMode(CombineFunction.MULTIPLY);
+
             //设置查找对象
-            request.source().query(boolQueryBuilder);
+            request.source().query(functionScoreQueryBuilder);
 
             //3.发送请求
             SearchResponse response = client.search(request, RequestOptions.DEFAULT);
