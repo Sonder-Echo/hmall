@@ -105,7 +105,7 @@ public class IndexTest {
         GetIndexRequest request = new GetIndexRequest(INDEX_NAME);
 
         //2.发送请求
-        Boolean exists = client.indices().exists(request, RequestOptions.DEFAULT);
+        boolean exists = client.indices().exists(request, RequestOptions.DEFAULT);
 
         //3.处理结果
         System.out.println(exists?"索引不存在":"索引存在");

@@ -59,7 +59,7 @@ public class DocumentTest {
     }
 
     /*
-     * 根据商品id擦汗寻mysql数据库中的商品，并将该商品保存到es
+     * 根据商品id查询mysql数据库中的商品，并将该商品保存到es
      */
     @Test
     public void testCreateIndex() throws IOException {

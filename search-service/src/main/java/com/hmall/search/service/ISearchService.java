@@ -33,5 +33,5 @@ public interface ISearchService {
      * @param query
      * @return
      */
-    Map<String, List<String>> filter(ItemPageQuery query);
+    Map<String, List<String>> filters(ItemPageQuery query);
 }

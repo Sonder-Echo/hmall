@@ -1,5 +1,6 @@
 package com.hmall.common.interceptor;
 
+
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.hmall.common.utils.UserContext;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,7 +16,7 @@ public class UserInfoInterceptor implements HandlerInterceptor{
         //获取请求头user-info
         String userId = request.getHeader("user-info");
         //如果有值的话设置到线程副本ThreadLocal中
-        if(StringUtils.isNotBlank(userId)){
+        if(userId != null && userId.length() > 0){
             UserContext.setUser(Long.parseLong(userId));
         }
         return true;

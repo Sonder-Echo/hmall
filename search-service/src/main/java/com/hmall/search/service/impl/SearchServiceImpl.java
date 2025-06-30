@@ -98,7 +98,6 @@ public class SearchServiceImpl implements ISearchService {
         PageVO<ItemDoc> pageVO = PageVO.empty(0L, 0L);
 
         try {
-
             //1.创建查询请求
             SearchRequest request = new SearchRequest(INDEX_NAME);
             //2.设置查询及各类参数
@@ -157,7 +156,7 @@ public class SearchServiceImpl implements ISearchService {
                     new FunctionScoreQueryBuilder.FilterFunctionBuilder[]{
                             new FunctionScoreQueryBuilder.FilterFunctionBuilder(
                                     // TODO：查找为什么term要.keyword原因
-                                    QueryBuilders.termQuery("isAD.keywork", true),
+                                    QueryBuilders.termQuery("isAD.keyword", true),
                                     ScoreFunctionBuilders.weightFactorFunction(10)
                             )
                     }
@@ -190,21 +189,20 @@ public class SearchServiceImpl implements ISearchService {
                     }
                 }
                 itemDocList.add(itemDoc);
-
-                return pageVO;
             }
+            pageVO.setList(itemDocList);
+            return pageVO;
 
         } catch (IOException e) {
             throw new RuntimeException("查询es中商品失败！", e);
         }
-        return pageVO;
     }
 
     @Override
-    public Map<String, List<String>> filter(ItemPageQuery query) {
+    public Map<String, List<String>> filters(ItemPageQuery query) {
         try {
             //只有当前分类或品牌没有选择的时候才去查询对应的数据
-            if(StrUtil.isNotBlank(query.getCategory()) || StrUtil.isNotBlank(query.getBrand())){
+            if(StrUtil.isBlank(query.getCategory()) || StrUtil.isBlank(query.getBrand())){
                 Map<String, List<String>> resultMap = new HashMap<>();
 
                 //1.创建查询条件
@@ -222,12 +220,14 @@ public class SearchServiceImpl implements ISearchService {
                 }
                 if(StrUtil.isNotBlank(query.getCategory())){
                     //过滤指定类别以外的数据
-                    boolQuery.filter(QueryBuilders.termQuery("category", query.getCategory()));
+                    // TODO：查找为什么term要.keyword原因
+                    boolQuery.filter(QueryBuilders.termQuery("category.keyword", query.getCategory()));
                     isNeedCategoryAgg = false;
                 }
                 if(StrUtil.isNotBlank(query.getBrand())){
                     //过滤指定品牌以外的数据
-                    boolQuery.filter(QueryBuilders.termQuery("brand", query.getBrand()));
+                    // TODO：查找为什么term要.keyword原因
+                    boolQuery.filter(QueryBuilders.termQuery("brand.keyword", query.getBrand()));
                     isNeedBrandAgg = false;
                 }
                 //价格范围参数
@@ -244,13 +244,15 @@ public class SearchServiceImpl implements ISearchService {
                 //设置分类聚合
                 if(isNeedCategoryAgg){
                     TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("category_agg")
-                            .field("category").size(20);
+                            // TODO：查找为什么term要.keyword原因
+                            .field("category.keyword").size(20);
                     request.source().aggregation(aggregationBuilder);
                 }
                 //设置品牌聚合
                 if(isNeedBrandAgg){
                     TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("brand_agg")
-                            .field("brand").size(20);
+                            // TODO：查找为什么term要.keyword原因
+                            .field("brand.keyword").size(20);
                     request.source().aggregation(aggregationBuilder);
                 }
 
@@ -267,7 +269,7 @@ public class SearchServiceImpl implements ISearchService {
                     }
                     resultMap.put("category",categoryList);
                 }
-                Terms brandAgg = aggregations.get("brandAgg");
+                Terms brandAgg = aggregations.get("brand_agg");
                 if(brandAgg != null){
                     List<String> brandList = new ArrayList<>();
                     for (Terms.Bucket bucket : brandAgg.getBuckets()) {
@@ -277,7 +279,6 @@ public class SearchServiceImpl implements ISearchService {
                 }
 
                 return resultMap;
-
             }
         }catch (IOException e){
             System.out.println("查询分类、品牌聚合数据失败！" + e);
