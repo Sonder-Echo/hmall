@@ -8,8 +8,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "搜索相关接口")
 @RestController
@@ -23,7 +27,7 @@ public class SearchController {
     @GetMapping("/list")
     public PageVO<ItemDoc> search(ItemPageQuery query) {
 
-        // TODO 根据条件搜索es中商品
-        return PageVO.empty(0L, 0L);
+        return searchService.search(query);
     }
+
 }
