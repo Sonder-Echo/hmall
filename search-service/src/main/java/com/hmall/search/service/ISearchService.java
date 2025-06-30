@@ -28,4 +28,10 @@ public interface ISearchService {
      */
     PageVO<ItemDoc> search(ItemPageQuery query);
 
+    /**
+     * 查询商品分类、品牌列表
+     * @param query
+     * @return
+     */
+    Map<String, List<String>> filter(ItemPageQuery query);
 }

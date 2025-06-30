@@ -30,4 +30,10 @@ public class SearchController {
         return searchService.search(query);
     }
 
+    @ApiOperation("搜索商品分类、品牌列表")
+    @GetMapping("/filters")
+    public Map<String, List<String>> filters(@RequestBody ItemPageQuery query) {
+        return searchService.filter(query);
+    }
+
 }

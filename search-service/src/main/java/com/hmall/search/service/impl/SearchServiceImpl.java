@@ -182,4 +182,89 @@ public class SearchServiceImpl implements ISearchService {
         return pageVO;
     }
 
+    @Override
+    public Map<String, List<String>> filter(ItemPageQuery query) {
+        try {
+            //只有当前分类或品牌没有选择的时候才去查询对应的数据
+            if(StrUtil.isNotBlank(query.getCategory()) || StrUtil.isNotBlank(query.getBrand())){
+                Map<String, List<String>> resultMap = new HashMap<>();
+
+                //1.创建查询条件
+                SearchRequest request = new SearchRequest(INDEX_NAME);
+                //2.设置参数
+                //是否需要查询分类聚合数据
+                boolean isNeedCategoryAgg = true;
+                //是否需要查询品牌聚合数据
+                boolean isNeedBrandAgg = true;
+                //设置搜索关键字
+                BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+                if(StrUtil.isNotBlank(query.getKey())){
+                    //文本匹配
+                    boolQuery.must(QueryBuilders.matchQuery("name", query.getKey()));
+                }
+                if(StrUtil.isNotBlank(query.getCategory())){
+                    //过滤指定类别以外的数据
+                    boolQuery.filter(QueryBuilders.termQuery("category", query.getCategory()));
+                    isNeedCategoryAgg = false;
+                }
+                if(StrUtil.isNotBlank(query.getBrand())){
+                    //过滤指定品牌以外的数据
+                    boolQuery.filter(QueryBuilders.termQuery("brand", query.getBrand()));
+                    isNeedBrandAgg = false;
+                }
+                //价格范围参数
+                if(query.getMinPrice() != null){
+                    boolQuery.filter(QueryBuilders.rangeQuery("price").gte(query.getMinPrice()));
+                }
+                if(query.getMaxPrice() != null){
+                    boolQuery.filter(QueryBuilders.rangeQuery("price").lte(query.getMaxPrice()));
+                }
+
+                //设置不返回文档
+                request.source().size(0);
+
+                //设置分类聚合
+                if(isNeedCategoryAgg){
+                    TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("category_agg")
+                            .field("category").size(20);
+                    request.source().aggregation(aggregationBuilder);
+                }
+                //设置品牌聚合
+                if(isNeedBrandAgg){
+                    TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("brand_agg")
+                            .field("brand").size(20);
+                    request.source().aggregation(aggregationBuilder);
+                }
+
+                //3.发送请求
+                SearchResponse searchResponse = client.search(request, RequestOptions.DEFAULT);
+
+                //4.解析响应数据
+                Aggregations aggregations = searchResponse.getAggregations();
+                Terms categoryAgg = aggregations.get("category_agg");
+                if(categoryAgg != null){
+                    List<String> categoryList = new ArrayList<>();
+                    for (Terms.Bucket bucket : categoryAgg.getBuckets()) {
+                        categoryList.add(bucket.getKeyAsString());
+                    }
+                    resultMap.put("category",categoryList);
+                }
+                Terms brandAgg = aggregations.get("brandAgg");
+                if(brandAgg != null){
+                    List<String> brandList = new ArrayList<>();
+                    for (Terms.Bucket bucket : brandAgg.getBuckets()) {
+                        brandList.add(bucket.getKeyAsString());
+                    }
+                    resultMap.put("brand",brandList);
+                }
+
+                return resultMap;
+
+            }
+        }catch (IOException e){
+            System.out.println("查询分类、品牌聚合数据失败！" + e);
+        }
+
+        return CollUtils.emptyMap();
+    }
 }
